@@ -10,18 +10,55 @@ namespace Cherry.Network
 {
     class NetworkHandler
     {
-        NetworkStream networkStream;
-        IPAddress iPAddress;
-        bool isConnectionEstablished;
+        /// <summary>
+        /// Handles Tcp network connection
+        /// </summary>
+        
+        protected NetworkStream networkStream;
+        protected IPAddress ipAddress;
+        protected TcpClient tcpClient = new TcpClient();
+        protected int targetPort;
+        protected bool isConnectionEstablished;
 
-        public NetworkHandler()
+        
+
+        /// <summary>
+        /// Initalizes NetworkHandler object with ip and port
+        /// </summary>
+        /// <param name="ip"></param>
+        /// Target host's ip address
+        /// <param name="port"></param>
+        /// Target host's port number
+        public NetworkHandler(string ip, int port)
         {
+            
 
+            if(!IPAddress.TryParse(ip, out ipAddress))
+            {
+                FormatException formatException = new FormatException("Invalid IP address.");
+                throw formatException;
+            }
+
+            if (!(0 < port && port < 65535))
+            {
+                FormatException formatException = new FormatException("Invalid Port number.");
+                throw formatException;
+            }
+            else
+            {
+                targetPort = port;
+            }
         }
-
         public void Connect()
         {
+            try
+            {
+                tcpClient.Connect(ipAddress, targetPort);
+            }
+            catch
+            {
 
+            }
         }
 
         public void Write()

@@ -9,5 +9,10 @@ namespace Cherry.Network
 {
     class IRCHandler : NetworkHandler
     {
+        
+        public IRCHandler(string ip, int port) : base(ip, port)
+        {
+
+        }
     }
 }
