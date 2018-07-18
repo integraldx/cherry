@@ -12,7 +12,7 @@ namespace Cherry.Network
         
         public IRCHandler(string ip, int port) : base(ip, port)
         {
-
+            
         }
     }
 }
