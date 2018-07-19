@@ -32,7 +32,6 @@ namespace Cherry.Network
         public NetworkHandler(string ip, int port)
         {
             
-
             if(!IPAddress.TryParse(ip, out ipAddress))
             {
                 FormatException formatException = new FormatException("Invalid IP address.");
@@ -49,26 +48,64 @@ namespace Cherry.Network
                 targetPort = port;
             }
         }
+
+        public NetworkHandler(string url)
+        {
+            string[] urlInfo = url.Split(':');
+            IPHostEntry hostEntry;
+            ipAddress = Dns.GetHostAddresses(urlInfo[0])[0];
+            if(!int.TryParse(urlInfo[1], out targetPort) || !(0 < targetPort && targetPort < 65535))
+            {
+                FormatException formatException = new FormatException("Invalid Port number.");
+            }
+        }
+
         public void Connect()
         {
             try
             {
                 tcpClient.Connect(ipAddress, targetPort);
+                networkStream = tcpClient.GetStream();
             }
-            catch
+            catch (Exception e)
             {
 
             }
         }
 
-        public void Write()
+        public void Write(string content)
         {
+            byte[] bytesToWrite = new byte[4096];
+
+            try
+            {
+                bytesToWrite.Initialize();
+                bytesToWrite = Encoding.UTF8.GetBytes(content);
+                networkStream.Write(bytesToWrite, 0, bytesToWrite.Length);
+            }
+            catch (Exception e)
+            {
+
+            }
 
         }
-
+        
         public string Read()
         {
-
+            byte[] bytesToRead = new byte[4096];
+            string strToReturn;
+            try
+            {
+                bytesToRead.Initialize();
+                networkStream.Read(bytesToRead, 0, 4096);
+                strToReturn = Encoding.UTF8.GetString(bytesToRead);
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+            return strToReturn;
         }
+        
     }
 }
