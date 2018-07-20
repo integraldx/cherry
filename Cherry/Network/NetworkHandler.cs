@@ -77,7 +77,7 @@ namespace Cherry.Network
             }
             catch (Exception e)
             {
-
+                throw e;
             }
         }
         private bool validateCertificate(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
@@ -116,5 +116,9 @@ namespace Cherry.Network
             return strToReturn;
         }
         
+        public void Disconnect()
+        {
+            sslStream.Close();
+        }
     }
 }
