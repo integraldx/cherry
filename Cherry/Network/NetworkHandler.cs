@@ -5,6 +5,10 @@ using System.Net.Sockets;
 using System.Net.WebSockets;
 using System.Net.NetworkInformation;
 using System.Net;
+using System.Net.Security;
+using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
+
 
 namespace Cherry.Network
 {
@@ -19,6 +23,8 @@ namespace Cherry.Network
         protected TcpClient tcpClient = new TcpClient();
         protected int targetPort;
         protected bool isConnectionEstablished;
+        protected SslStream sslStream;
+        protected IPHostEntry hostEntry = new IPHostEntry();
 
         
 
@@ -52,7 +58,7 @@ namespace Cherry.Network
         public NetworkHandler(string url)
         {
             string[] urlInfo = url.Split(':');
-            IPHostEntry hostEntry;
+            hostEntry.HostName = urlInfo[0];
             ipAddress = Dns.GetHostAddresses(urlInfo[0])[0];
             if(!int.TryParse(urlInfo[1], out targetPort) || !(0 < targetPort && targetPort < 65535))
             {
@@ -65,23 +71,26 @@ namespace Cherry.Network
             try
             {
                 tcpClient.Connect(ipAddress, targetPort);
-                networkStream = tcpClient.GetStream();
+                //networkStream = tcpClient.GetStream();
+                sslStream = new SslStream(tcpClient.GetStream(), false, validateCertificate, null);
+                sslStream.AuthenticateAsClient(hostEntry.HostName);
             }
             catch (Exception e)
             {
 
             }
         }
+        private bool validateCertificate(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
+        {
+            return true;
+        }
 
         public void Write(string content)
         {
-            byte[] bytesToWrite = new byte[4096];
-
             try
             {
-                bytesToWrite.Initialize();
-                bytesToWrite = Encoding.UTF8.GetBytes(content);
-                networkStream.Write(bytesToWrite, 0, bytesToWrite.Length);
+                byte[] bytesToWrite = Encoding.UTF8.GetBytes(content);
+                sslStream.Write(bytesToWrite, 0, bytesToWrite.Length);
             }
             catch (Exception e)
             {
@@ -97,8 +106,8 @@ namespace Cherry.Network
             try
             {
                 bytesToRead.Initialize();
-                networkStream.Read(bytesToRead, 0, 4096);
-                strToReturn = Encoding.UTF8.GetString(bytesToRead);
+                int readLength = sslStream.Read(bytesToRead, 0, 4096);
+                strToReturn = Encoding.UTF8.GetString(bytesToRead, 0, readLength);
             }
             catch (Exception e)
             {
