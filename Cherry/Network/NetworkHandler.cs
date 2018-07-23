@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Linq;
 using System.Net.Sockets;
 using System.Net.WebSockets;
 using System.Net.NetworkInformation;
 using System.Net;
 using System.Net.Security;
+using System.Security.Authentication;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 
@@ -18,13 +20,12 @@ namespace Cherry.Network
         /// Handles Tcp network connection
         /// </summary>
         
-        protected NetworkStream networkStream;
         protected IPAddress ipAddress;
-        protected TcpClient tcpClient = new TcpClient();
+        protected TcpClient tcpClient;
         protected int targetPort;
-        protected bool isConnectionEstablished;
         protected SslStream sslStream;
-        protected IPHostEntry hostEntry = new IPHostEntry();
+        protected IPHostEntry hostEntry;
+        protected readonly string localHostName = Dns.GetHostName();
 
         
 
@@ -58,26 +59,22 @@ namespace Cherry.Network
         public NetworkHandler(string url)
         {
             string[] urlInfo = url.Split(':');
-            hostEntry.HostName = urlInfo[0];
-            ipAddress = Dns.GetHostAddresses(urlInfo[0])[0];
             if(!int.TryParse(urlInfo[1], out targetPort) || !(0 < targetPort && targetPort < 65535))
             {
                 FormatException formatException = new FormatException("Invalid Port number.");
             }
+            hostEntry = Dns.GetHostEntry(urlInfo[0]);
+            tcpClient = new TcpClient(urlInfo[0], targetPort);
         }
 
         public void Connect()
         {
-            try
+            sslStream = new SslStream(tcpClient.GetStream(), false, validateCertificate, null);
+            sslStream.AuthenticateAsClient(hostEntry.HostName);
+
+            if(sslStream.IsAuthenticated == false)
             {
-                tcpClient.Connect(ipAddress, targetPort);
-                //networkStream = tcpClient.GetStream();
-                sslStream = new SslStream(tcpClient.GetStream(), false, validateCertificate, null);
-                sslStream.AuthenticateAsClient(hostEntry.HostName);
-            }
-            catch (Exception e)
-            {
-                throw e;
+                Console.WriteLine("SSL connection failed.");
             }
         }
         private bool validateCertificate(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)

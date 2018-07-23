@@ -6,9 +6,18 @@ namespace Cherry
     {
         static void Main(string[] args)
         {
-            Network.NetworkHandler networkHandler = new Network.NetworkHandler("irc.uriirc.org:16667");
-            networkHandler.Connect();
-            
+            Network.IRCHandler handler = new Network.IRCHandler("irc.uriirc.org:16667");
+            handler.Connect("cherry", "cherry");
+
+            Console.WriteLine(handler.Read());
+
+            Console.WriteLine(handler.Read());
+
+            Console.WriteLine(handler.Read());
+
+            Console.WriteLine(handler.Read());
+
+            Console.WriteLine(handler.Read());
         }
     }
 }
