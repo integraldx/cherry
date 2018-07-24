@@ -18,8 +18,18 @@ namespace Cherry.Network
             
         }
 
-        public void Connect()
+        public IRCHandler(string url) : base(url)
         {
+
+        }
+
+        public void Connect(string userName, string nickName)
+        {
+            base.Connect();
+            
+            base.Write("USER guest 0 * :" + userName + "\n");
+            base.Write("PASS test\n");
+            base.Write("NICK " + nickName + "\n");
 
         }
 
@@ -33,9 +43,9 @@ namespace Cherry.Network
 
         }
 
-        public void Read()
+        public string Read()
         {
-
+            return base.Read();
         }
 
         public void Disconnect()
