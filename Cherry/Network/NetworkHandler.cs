@@ -58,8 +58,8 @@ namespace Cherry.Network
         public NetworkHandler(string url)
         {
             string[] urlInfo = url.Split(':');
-            hostEntry.HostName = urlInfo[0];
-            ipAddress = Dns.GetHostAddresses(urlInfo[0])[0];
+            hostEntry = Dns.GetHostByName(urlInfo[0]);
+            ipAddress = hostEntry.AddressList[0];
             if(!int.TryParse(urlInfo[1], out targetPort) || !(0 < targetPort && targetPort < 65535))
             {
                 FormatException formatException = new FormatException("Invalid Port number.");
@@ -70,6 +70,7 @@ namespace Cherry.Network
         {
             try
             {
+                Console.WriteLine("connecting to: {0} {1}", ipAddress.ToString(),  targetPort);
                 tcpClient.Connect(ipAddress, targetPort);
                 //networkStream = tcpClient.GetStream();
                 sslStream = new SslStream(tcpClient.GetStream(), false, validateCertificate, null);
@@ -84,7 +85,7 @@ namespace Cherry.Network
         {
             return true;
         }
-
+        
         public void Write(string content)
         {
             try
@@ -94,7 +95,7 @@ namespace Cherry.Network
             }
             catch (Exception e)
             {
-
+                throw e;
             }
 
         }
@@ -106,7 +107,7 @@ namespace Cherry.Network
             try
             {
                 bytesToRead.Initialize();
-                int readLength = sslStream.Read(bytesToRead, 0, 4096);
+                int readLength = sslStream.Read(bytesToRead, 0, 1024);
                 strToReturn = Encoding.UTF8.GetString(bytesToRead, 0, readLength);
             }
             catch (Exception e)
