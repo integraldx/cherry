@@ -33,9 +33,9 @@ namespace Cherry.Network
 
         }
 
-        public void Write()
+        public void Write(string content)
         {
-
+            base.Write(content);
         }
 
         public void Command()
@@ -47,10 +47,23 @@ namespace Cherry.Network
         {
             return base.Read();
         }
+        public delegate void ReadHandler(object obj, EventArgs eventArgs);
+        public event ReadHandler SomethingToRead;
+        public void BeginRead()
+        {
+            while (true)
+            {
+                
+            }
+        }
 
-        public void Disconnect()
+        public Message Parse(string content)
         {
 
+        }
+        public void Disconnect()
+        {
+            base.Disconnect();
         }
     }
 }
