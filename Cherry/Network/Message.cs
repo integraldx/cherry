@@ -6,15 +6,25 @@ namespace Cherry.Network
 {
     class Message
     {
-        public bool isOperation;
-        public string writer;
+        public string command;
+        public string speaker;
         public string content;
         public string channel;
         public DateTime timeStamp;
-        public Message(string targetChannel, string contentToSend)
+        public Message()
+        {
+
+        }
+        public Message(string targetChannel, string content)
         {
             channel = targetChannel;
-            content = contentToSend;
+            this.content = content;
+        }
+        public Message(string command, string targetChannel, string content)
+        {
+            this.command = command;
+            channel = targetChannel;
+            this.content = content;
         }
     }
 }

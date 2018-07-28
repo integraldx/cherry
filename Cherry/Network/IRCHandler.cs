@@ -12,7 +12,7 @@ namespace Cherry.Network
     {
         string userName;
         string realName;
-        string[] channels;
+        Dictionary<string, ChannelStream> channels = new Dictionary<string, ChannelStream>();
         public Queue<Message> writeQueue = new Queue<Message>();
         Queue<Message> readQueue;
 
@@ -30,7 +30,7 @@ namespace Cherry.Network
         {
             Console.WriteLine("Connecting to " + base.hostEntry.HostName);
             base.Connect();
-            
+
             base.Write("USER guest 0 * :" + userName + "\n");
             base.Write("PASS test\n");
             base.Write("NICK " + nickName + "\n");
@@ -58,7 +58,7 @@ namespace Cherry.Network
                 {
                     Message messageToSend = writeQueue.Dequeue();
                     string stringToSend = "";
-                    if (!messageToSend.isOperation)
+                    if (messageToSend.command == "PRIVMSG")
                     {
                         stringToSend += "PRIVMSG " + messageToSend.channel + " :" + messageToSend.content + "\n";
                         Write(stringToSend);
@@ -76,25 +76,47 @@ namespace Cherry.Network
         {
             return base.Read();
         }
-        public delegate void ReadHandler(object obj, EventArgs eventArgs);
-        public event ReadHandler SomethingToRead;
-        public void BeginRead()
+
+        public void StartRead()
+        {
+            Thread readerThread = new Thread(new ThreadStart(ThreadedRead));
+            readerThread.Start();
+        }
+        private void ThreadedRead()
         {
             while (true)
             {
-                
+                string str = Read();
+                string[] messages = str.Split('\n');
+                foreach(string message in messages)
+                {
+                    Console.WriteLine(message);
+                }
             }
         }
+
+        //private Message Parse(string strToParse)
+        //{
+        //    Message message = new Message();
+        //    string[] splitByColon = strToParse.Split(":");
+        //    string[] argsSplitBySpace = splitByColon[0].Split(" ");
+        //    message.command = argsSplitBySpace[1];
+        //    message.speaker
+        //    switch (message.command)
+        //    {
+        //        case "PRIVMSG":
+        //            break;
+        //    }
+
+        //}
 
         public ChannelStream Join(string channel)
         {
             Write("JOIN " + channel + "\n");
-            return new ChannelStream(channel);
+            channels.Add(channel, new ChannelStream(channel, this));
+            return channels[channel];
         }
-        //public Message Parse(string content)
-        //{
 
-        //}
         public void Disconnect()
         {
             base.Disconnect();

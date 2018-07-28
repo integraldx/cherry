@@ -64,18 +64,32 @@ namespace Cherry.Network
                 FormatException formatException = new FormatException("Invalid Port number.");
             }
             hostEntry = Dns.GetHostEntry(urlInfo[0]);
-            tcpClient = new TcpClient(urlInfo[0], targetPort);
         }
 
         public void Connect()
         {
-            sslStream = new SslStream(tcpClient.GetStream(), false, validateCertificate, null);
-            sslStream.AuthenticateAsClient(hostEntry.HostName);
-
-            if(sslStream.IsAuthenticated == false)
+            foreach (IPAddress addr in hostEntry.AddressList)
             {
-                Console.WriteLine("SSL connection failed.");
+                try
+                {
+                    tcpClient = new TcpClient();
+                    tcpClient.Connect(addr, targetPort);
+                    sslStream = new SslStream(tcpClient.GetStream(), false, validateCertificate, null);
+                    sslStream.AuthenticateAsClient(hostEntry.HostName);
+                    if (sslStream.IsAuthenticated)
+                    {
+                        return;
+                    }
+                }
+                catch (Exception e)
+                {
+
+                    tcpClient.Close();
+                    tcpClient = null;
+                }
             }
+            Console.WriteLine("SSL connection failed.");
+            throw new Exception();
         }
         private bool validateCertificate(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
         {
