@@ -10,14 +10,16 @@ namespace Cherry
             handler.Connect("cherry", "cherry");
 
             Console.WriteLine(handler.Read());
-
             Console.WriteLine(handler.Read());
-
             Console.WriteLine(handler.Read());
-
-            Console.WriteLine(handler.Read());
-
-            Console.WriteLine(handler.Read());
+            handler.Join("#Integral");
+            handler.StartWrite();
+            while (true)
+            {
+                string str = Console.ReadLine();
+                Network.Message message = new Network.Message("#Integral", str);
+                handler.writeQueue.Enqueue(message);
+            }
         }
     }
 }

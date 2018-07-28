@@ -6,6 +6,10 @@ namespace Cherry.Network
 {
     class ChannelStream
     {
-        public Delegate 
+        string channelName;
+        public ChannelStream(string channel)
+        {
+            channelName = channel;
+        }
     }
 }
