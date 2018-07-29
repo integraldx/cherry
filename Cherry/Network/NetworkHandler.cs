@@ -23,8 +23,8 @@ namespace Cherry.Network
         protected IPAddress ipAddress;
         protected TcpClient tcpClient;
         protected int targetPort;
-        protected SslStream sslStream;
-        protected IPHostEntry hostEntry;
+        private SslStream sslStream;
+        public IPHostEntry hostEntry;
         protected readonly string localHostName = Dns.GetHostName();
 
         

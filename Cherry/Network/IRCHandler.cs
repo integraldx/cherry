@@ -7,41 +7,37 @@ using System.Net.NetworkInformation;
 using System.Threading;
 namespace Cherry.Network
 {
-    class IRCHandler : NetworkHandler
+    class IRCHandler
     {
         string userName;
         string nickName;
+        NetworkHandler networkHandler;
         Dictionary<string, ChannelStream> channels = new Dictionary<string, ChannelStream>();
+        ChannelStream managerStream;
         public Queue<Message> writeQueue = new Queue<Message>();
         Queue<Message> readQueue;
 
-        public IRCHandler(string ip, int port) : base(ip, port)
+        public IRCHandler(NetworkHandler networkHandler, string userName, string nickName)
         {
-            
-        }
-
-        public IRCHandler(string url) : base(url)
-        {
-
-        }
-
-        public void Connect(string userName, string nickName)
-        {
+            this.networkHandler = networkHandler;
             this.userName = userName;
             this.nickName = nickName;
-            Console.WriteLine("Connecting to " + base.hostEntry.HostName);
-            base.Connect();
-
-            base.Write("USER guest 0 * :" + userName + "\n");
-            base.Write("PASS test\n");
-            base.Write("NICK " + nickName + "\n");
-            StartWrite();
-            StartRead();
         }
 
-        public void Write(string content)
+        public ChannelStream Connect()
         {
-            base.Write(content);
+            Console.WriteLine("Connecting to " + networkHandler.hostEntry.HostName);
+            networkHandler.Connect();
+
+            managerStream = new ChannelStream("manager", this);
+
+            networkHandler.Write("USER guest 0 * :" + userName + "\n");
+            networkHandler.Write("PASS test\n");
+            networkHandler.Write("NICK " + nickName + "\n");
+            StartWrite();
+            StartRead();
+
+            return managerStream;
         }
 
         private void StartWrite()
@@ -60,24 +56,12 @@ namespace Cherry.Network
                 if(writeQueue.Count > 0)
                 {
                     Message messageToSend = writeQueue.Dequeue();
-                    string stringToSend = "";
-                    if (messageToSend.command == Network.Command.PRIVMSG)
-                    {
-                        stringToSend += "PRIVMSG " + messageToSend.channel + " :" + messageToSend.content + "\n";
-                        Write(stringToSend);
-                    }
+                    string stringToSend = messageToSend.ToString();
+                    
+                    networkHandler.Write(stringToSend);
+                    Console.WriteLine(stringToSend);
                 }
             }
-        }
-
-        /// <summary>
-        /// Manually Reads Data from stream.
-        /// Don't use it unless it is urgent.
-        /// </summary>
-        /// <returns>string data from network</returns>
-        public string Read()
-        {
-            return base.Read();
         }
 
         /// <summary>
@@ -96,16 +80,16 @@ namespace Cherry.Network
         {
             while (true)
             {
-                string str = Read();
+                string str = networkHandler.Read();
                 string[] messages = str.Split('\n');
                 foreach(string messageFromStream in messages)
                 {
                     Message msgToChannels = Message.ToMessage(messageFromStream);
                     if (msgToChannels != null)
                     {
-                        if (msgToChannels.channel == string.Empty)
+                        if (msgToChannels.channel == string.Empty || msgToChannels.channel == "!Manager")
                         {
-                            Console.WriteLine(messageFromStream);
+                            managerStream.InvokeReadBehavior(msgToChannels);
                         }
                         else
                         {
@@ -115,6 +99,7 @@ namespace Cherry.Network
                 }
             }
         }
+
         
         /// <summary>
         /// Joins new channel and Get ChannelStream
@@ -123,7 +108,10 @@ namespace Cherry.Network
         /// <returns> ChannelStream which is binded to joined Channel </returns>
         public ChannelStream Join(string channel)
         {
-            Write("JOIN " + channel + "\n");
+            Message message = new Message();
+            message.command = Command.JOIN;
+            message.channel = channel;
+            this.writeQueue.Enqueue(message);
             channels.Add(channel, new ChannelStream(channel, this));
             return channels[channel];
         }
@@ -131,7 +119,7 @@ namespace Cherry.Network
 
         public void Disconnect()
         {
-            base.Disconnect();
+            networkHandler.Disconnect();
         }
     }
 }

@@ -4,11 +4,12 @@ using System.Text;
 
 namespace Cherry.Network
 {
-    enum Command { PRIVMSG, MODE, PING, INVITE, TOPIC, LIST, NAMES, NOTICE};
+    enum Command { PRIVMSG, MODE, PING, PONG, INVITE, TOPIC, LIST, NAMES, NOTICE, JOIN};
     class Message
     {
+        public string origStr;
         public Command command;
-        public string[] commmandArgs;
+        public List<string> commandArgs = new List<string>();
         public string speakerNickName;
         public string speakerRealName;
         public string content;
@@ -38,6 +39,12 @@ namespace Cherry.Network
                 case Command.PRIVMSG:
                     returnStr = "PRIVMSG " + channel + " :" + content;
                     break;
+                case Command.JOIN:
+                    returnStr = "JOIN " + channel;
+                    break;
+                case Command.PONG:
+                    returnStr = "PONG :" + commandArgs[0];
+                    break;
             }
             return returnStr;
         }
@@ -50,6 +57,7 @@ namespace Cherry.Network
                 return null;
             }
             Message message = new Message();
+            message.origStr = fromString;
             var strSplitBySpace = fromString.Split(' ');
             if (strSplitBySpace[0][0] == ':')
             {
@@ -86,7 +94,8 @@ namespace Cherry.Network
                 {
                     case "PING":
                         message.command = Network.Command.PING;
-                        message.commmandArgs[0] = strSplitBySpace[1];
+                        message.channel = "!Manager";
+                        message.commandArgs.Add(strSplitBySpace[1].Trim(':'));
                         break;
                 }
             }
