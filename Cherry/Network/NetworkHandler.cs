@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Linq;
 using System.Net.Sockets;
 using System.Net.WebSockets;
 using System.Net.NetworkInformation;
 using System.Net;
 using System.Net.Security;
+using System.Security.Authentication;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 
@@ -18,13 +20,12 @@ namespace Cherry.Network
         /// Handles Tcp network connection
         /// </summary>
         
-        protected NetworkStream networkStream;
         protected IPAddress ipAddress;
-        protected TcpClient tcpClient = new TcpClient();
+        protected TcpClient tcpClient;
         protected int targetPort;
-        protected bool isConnectionEstablished;
         protected SslStream sslStream;
-        protected IPHostEntry hostEntry = new IPHostEntry();
+        protected IPHostEntry hostEntry;
+        protected readonly string localHostName = Dns.GetHostName();
 
         
 
@@ -58,30 +59,44 @@ namespace Cherry.Network
         public NetworkHandler(string url)
         {
             string[] urlInfo = url.Split(':');
-            hostEntry.HostName = urlInfo[0];
-            ipAddress = Dns.GetHostAddresses(urlInfo[0])[0];
             if(!int.TryParse(urlInfo[1], out targetPort) || !(0 < targetPort && targetPort < 65535))
             {
                 FormatException formatException = new FormatException("Invalid Port number.");
             }
+            hostEntry = Dns.GetHostEntry(urlInfo[0]);
         }
 
         public void Connect()
         {
-            try
+            foreach (IPAddress addr in hostEntry.AddressList)
             {
-                tcpClient.Connect(ipAddress, targetPort);
-                //networkStream = tcpClient.GetStream();
-                sslStream = new SslStream(tcpClient.GetStream(), false, validateCertificate, null);
-                sslStream.AuthenticateAsClient(hostEntry.HostName);
-            }
-            catch (Exception e)
-            {
+                try
+                {
+                    tcpClient = new TcpClient();
+                    tcpClient.Connect(addr, targetPort);
+                    sslStream = new SslStream(tcpClient.GetStream(), false, validateCertificate, null);
+                    sslStream.AuthenticateAsClient(hostEntry.HostName);
+                    if (sslStream.IsAuthenticated)
+                    {
+                        Console.WriteLine("SSL connection established.");
+                        return;
+                    }
+                }
+                catch (Exception e)
+                {
 
+                    tcpClient.Close();
+                    tcpClient = null;
+                }
             }
+            Console.WriteLine("SSL connection failed.");
+            throw new Exception();
         }
         private bool validateCertificate(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
         {
+            /*
+             * 일단 지금은 인증서에 대한 무조건적인 신뢰
+             */
             return true;
         }
 
@@ -116,5 +131,9 @@ namespace Cherry.Network
             return strToReturn;
         }
         
+        public void Disconnect()
+        {
+            sslStream.Close();
+        }
     }
 }
