@@ -6,10 +6,12 @@ namespace Cherry.Network
 {
     class Message
     {
-        public string command;
-        public string speaker;
+        public string command = String.Empty;
+        public string[] commmandArgs;
+        public string speakerNickName;
+        public string speakerRealName;
         public string content;
-        public string channel;
+        public string channel = String.Empty;
         public DateTime timeStamp;
         public Message()
         {

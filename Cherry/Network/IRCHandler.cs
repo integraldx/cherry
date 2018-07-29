@@ -90,25 +90,22 @@ namespace Cherry.Network
                 string[] messages = str.Split('\n');
                 foreach(string message in messages)
                 {
-                    Console.WriteLine(message);
+                    Message msgToChannels = strToMessage(message);
+                    if (msgToChannels != null)
+                    {
+                        if (msgToChannels.channel == string.Empty)
+                        {
+                            Console.WriteLine(message);
+                        }
+                        else
+                        {
+                            channels[msgToChannels.channel].InvokeReadBehavior(msgToChannels);
+                        }
+                    }
                 }
             }
         }
-
-        //private Message Parse(string strToParse)
-        //{
-        //    Message message = new Message();
-        //    string[] splitByColon = strToParse.Split(":");
-        //    string[] argsSplitBySpace = splitByColon[0].Split(" ");
-        //    message.command = argsSplitBySpace[1];
-        //    message.speaker
-        //    switch (message.command)
-        //    {
-        //        case "PRIVMSG":
-        //            break;
-        //    }
-
-        //}
+        
 
         public ChannelStream Join(string channel)
         {
@@ -117,6 +114,52 @@ namespace Cherry.Network
             return channels[channel];
         }
 
+        public Message strToMessage(string str)
+        {
+            if(str == String.Empty)
+            {
+                return null;
+            }
+            Message message = new Message();
+            var strSplitBySpace = str.Split(' ');
+            if(strSplitBySpace[0][0] == ':')
+            {
+                var userNames = strSplitBySpace[0].Trim(':').Split('!');
+                if (userNames.Length > 1)
+                {
+                    message.speakerNickName = userNames[0];
+                    message.speakerRealName = userNames[1];
+                }
+                else
+                {
+                    message.speakerRealName = userNames[0];
+                }
+
+                message.command = strSplitBySpace[1];
+
+                switch (message.command)
+                {
+                    case "PRIVMSG":
+                        message.channel = strSplitBySpace[2];
+                        message.content = strSplitBySpace[3].Trim(':');
+                        break;
+                    case "MODE":
+                        break;
+                }
+                
+            }
+            else
+            {
+                message.command = strSplitBySpace[0];
+                switch (message.command)
+                {
+                    case "PING":
+                        message.commmandArgs[0] = strSplitBySpace[1];
+                        break;
+                }
+            }
+            return message;
+        }
         public void Disconnect()
         {
             base.Disconnect();

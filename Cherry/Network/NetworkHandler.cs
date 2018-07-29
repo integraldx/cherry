@@ -78,6 +78,7 @@ namespace Cherry.Network
                     sslStream.AuthenticateAsClient(hostEntry.HostName);
                     if (sslStream.IsAuthenticated)
                     {
+                        Console.WriteLine("SSL connection established.");
                         return;
                     }
                 }
@@ -93,6 +94,9 @@ namespace Cherry.Network
         }
         private bool validateCertificate(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
         {
+            /*
+             * 일단 지금은 인증서에 대한 무조건적인 신뢰
+             */
             return true;
         }
 
