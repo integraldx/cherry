@@ -19,7 +19,7 @@ namespace Cherry.Network
 
         public void WriteMessage(string content)
         {
-            handler.writeQueue.Enqueue(new Message("PRIVMSG" ,channelName, content));
+            handler.writeQueue.Enqueue(new Message(Command.PRIVMSG ,channelName, content));
         }
 
         public void InvokeReadBehavior(Message message)
