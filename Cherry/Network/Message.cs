@@ -80,6 +80,21 @@ namespace Cherry.Network
                         message.command = Network.Command.PRIVMSG;
                         message.channel = strSplitBySpace[2];
                         message.content = strSplitBySpace[3].Trim(':');
+                        int iter0 = 4;
+                        while (true)
+                        {
+                            try
+                            {
+                                message.content += " " + strSplitBySpace[iter0];
+                                iter0++;
+                            }
+                            catch(IndexOutOfRangeException e)
+                            {
+                                break;
+                            }
+                            
+                       
+                        }
                         break;
                     case "MODE":
                         message.command = Network.Command.MODE;

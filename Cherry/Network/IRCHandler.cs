@@ -58,7 +58,7 @@ namespace Cherry.Network
                     Message messageToSend = writeQueue.Dequeue();
                     string stringToSend = messageToSend.ToString();
                     
-                    networkHandler.Write(stringToSend);
+                    networkHandler.Write(stringToSend + "\n");
                     Console.WriteLine(stringToSend);
                 }
             }
@@ -84,7 +84,8 @@ namespace Cherry.Network
                 string[] messages = str.Split('\n');
                 foreach(string messageFromStream in messages)
                 {
-                    Message msgToChannels = Message.ToMessage(messageFromStream);
+
+                    Message msgToChannels = Message.ToMessage(messageFromStream.Trim('\r'));
                     if (msgToChannels != null)
                     {
                         if (msgToChannels.channel == string.Empty || msgToChannels.channel == "!Manager")
