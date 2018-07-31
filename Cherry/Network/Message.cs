@@ -17,18 +17,12 @@ namespace Cherry.Network
         public DateTime timeStamp;
         public Message()
         {
-
+            timeStamp = DateTime.Now;
         }
-        public Message(string targetChannel, string content)
-        {
-            channel = targetChannel;
-            this.content = content;
-        }
-        public Message(Command command, string targetChannel, string content)
+        public Message(Command command, string targetChannel)
         {
             this.command = command;
             channel = targetChannel;
-            this.content = content;
         }
 
         override public string ToString()
@@ -44,6 +38,9 @@ namespace Cherry.Network
                     break;
                 case Command.PONG:
                     returnStr = "PONG :" + commandArgs[0];
+                    break;
+                case Command.INVITE:
+                    returnStr = "INVITE " + commandArgs[0] + " " + commandArgs[1];
                     break;
             }
             return returnStr;
@@ -98,6 +95,11 @@ namespace Cherry.Network
                         break;
                     case "MODE":
                         message.command = Network.Command.MODE;
+                        break;
+                    case "INVITE":
+                        message.command = Command.INVITE;
+                        message.commandArgs[0] = strSplitBySpace[2];
+                        message.commandArgs[1] = strSplitBySpace[3];
                         break;
                 }
 
