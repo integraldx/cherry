@@ -8,29 +8,23 @@ namespace Cherry.Service
     class ServiceManager
     {
         ChannelStream managerStream;
-        ChannelStream testerStream;
-        IRCHandler ircHander;
+        List<Service> serviceList = new List<Service>();
+        IRCHandler ircHandler;
 
         public ServiceManager(IRCHandler ircHandler)
         {
-            this.ircHander = ircHandler;
-            managerStream = ircHander.Connect();
+            this.ircHandler = ircHandler;
+            managerStream = ircHandler.Connect();
 
             managerStream.ToReadEvent += PingResponse;
             managerStream.ToReadEvent += Echo;
         }
+        
 
-        public void JoinTester()
+        public void AssignNewServiceToChannel(string channel)
         {
-            testerStream = ircHander.Join("#botTestintint");
-
-            testerStream.ToReadEvent += Echo;
-            testerStream.ToReadEvent += Hello;
-        }
-
-        void Echo(Message message)
-        {
-            Console.WriteLine(message.origStr);
+            ChannelStream channelStream = ircHandler.Join(channel);
+            serviceList.Add(new Service(channelStream));
         }
 
         void PingResponse(Message message)
@@ -44,22 +38,10 @@ namespace Cherry.Service
             }
         }
 
-        void Hello(Message message)
+        void Echo(Message message)
         {
-            if(message.command == Command.PRIVMSG)
-            {
-                if(message.content.Split(' ')[0] == "체리")
-                {
-                    if(message.content.Split(' ')[1] == "안녕!")
-                    {
-                        Message msg = new Message();
-                        msg.command = Command.PRIVMSG;
-                        msg.content = "안녕하세요 " + message.speakerNickName + ".";
-                        msg.channel = message.channel;
-                        testerStream.WriteMessage(msg);
-                    }
-                }
-            }
+            Console.WriteLine(message.origStr);
         }
+
     }
 }
