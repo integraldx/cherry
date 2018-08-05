@@ -15,11 +15,12 @@ namespace Cherry.Network
         public string content;
         public string channel = String.Empty;
         public DateTime timeStamp;
+
         public Message()
         {
             timeStamp = DateTime.Now;
         }
-        public Message(Command command, string targetChannel)
+        public Message(Command command, string targetChannel) : this()
         {
             this.command = command;
             channel = targetChannel;

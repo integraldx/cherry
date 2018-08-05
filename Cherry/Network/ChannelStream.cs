@@ -8,17 +8,13 @@ namespace Cherry.Network
     {
         string channelName;
         IRCHandler handler;
+        Dictionary<string, User> users;
         public delegate void OnRead(Message message);
         public event OnRead ToReadEvent;
         public ChannelStream(string channel, IRCHandler ircHandler)
         {
             handler = ircHandler;
             channelName = channel;
-        }
-
-        public void WriteMessage(string content)
-        {
-            handler.writeQueue.Enqueue(new Message(Command.PRIVMSG ,channelName, content));
         }
 
         public void WriteMessage(Message message)
