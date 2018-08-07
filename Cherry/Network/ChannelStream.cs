@@ -8,28 +8,23 @@ namespace Cherry.Network
     {
         string channelName;
         IRCHandler handler;
+        Dictionary<string, User> users;
         public delegate void OnRead(Message message);
-        public event OnRead ToReadEvent;
+        public event OnRead NewMessageFromChannelEvent;
         public ChannelStream(string channel, IRCHandler ircHandler)
         {
             handler = ircHandler;
             channelName = channel;
-            ToReadEvent += Echo;
         }
 
-        public void WriteMessage(string content)
+        public void WriteMessage(Message message)
         {
-            handler.writeQueue.Enqueue(new Message("PRIVMSG" ,channelName, content));
+            handler.EnqueueMessage(message);
         }
 
         public void InvokeReadBehavior(Message message)
         {
-            ToReadEvent.Invoke(message);
-        }
-
-        private void Echo(Message message)
-        {
-            Console.WriteLine(message.speakerNickName + " : " + message.content);
+            NewMessageFromChannelEvent.Invoke(message);
         }
     }
 }

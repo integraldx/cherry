@@ -1,4 +1,6 @@
 ﻿using System;
+using Cherry.Network;
+using Cherry.Service;
 
 namespace Cherry
 {
@@ -6,22 +8,8 @@ namespace Cherry
     {
         static void Main(string[] args)
         {
-            Network.IRCHandler handler = new Network.IRCHandler("irc.uriirc.org:16667");
-            handler.Connect("cherry", "cherry");
-
-            handler.StartWrite();
-            handler.StartRead();
-            //Console.WriteLine(handler.Read());
-            //Console.WriteLine(handler.Read());
-            //Console.WriteLine(handler.Read());
-
-            Network.ChannelStream chStream =  handler.Join("#botTestintint");
-
-            
-            while (true)
-            {
-                chStream.WriteMessage(Console.ReadLine());
-            }
+            ServiceManager serviceManager = new ServiceManager(new IRCHandler(new NetworkHandler("irc.uriirc.org:16667"), "cherry", "Cherry"));
+            serviceManager.AssignNewServiceToChannel("#botTestintint");
         }
     }
 }
