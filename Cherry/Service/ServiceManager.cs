@@ -16,8 +16,8 @@ namespace Cherry.Service
             this.ircHandler = ircHandler;
             managerStream = ircHandler.Connect();
 
-            managerStream.ToReadEvent += PingResponse;
-            managerStream.ToReadEvent += Echo;
+            managerStream.NewMessageFromChannelEvent += PingResponse;
+            managerStream.NewMessageFromChannelEvent += Echo;
         }
         
 

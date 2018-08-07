@@ -10,7 +10,7 @@ namespace Cherry.Network
         IRCHandler handler;
         Dictionary<string, User> users;
         public delegate void OnRead(Message message);
-        public event OnRead ToReadEvent;
+        public event OnRead NewMessageFromChannelEvent;
         public ChannelStream(string channel, IRCHandler ircHandler)
         {
             handler = ircHandler;
@@ -19,12 +19,12 @@ namespace Cherry.Network
 
         public void WriteMessage(Message message)
         {
-            handler.writeQueue.Enqueue(message);
+            handler.EnqueueMessage(message);
         }
 
         public void InvokeReadBehavior(Message message)
         {
-            ToReadEvent.Invoke(message);
+            NewMessageFromChannelEvent.Invoke(message);
         }
     }
 }

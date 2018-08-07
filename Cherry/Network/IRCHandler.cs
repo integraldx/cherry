@@ -14,8 +14,7 @@ namespace Cherry.Network
         NetworkHandler networkHandler;
         Dictionary<string, ChannelStream> channels = new Dictionary<string, ChannelStream>();
         ChannelStream managerStream;
-        public Queue<Message> writeQueue = new Queue<Message>();
-        Queue<Message> readQueue;
+        Queue<Message> writeQueue = new Queue<Message>();
 
         public IRCHandler(NetworkHandler networkHandler, string userName, string nickName)
         {
@@ -26,7 +25,7 @@ namespace Cherry.Network
 
         public ChannelStream Connect()
         {
-            Console.WriteLine("Connecting to " + networkHandler.hostEntry.HostName);
+            Console.WriteLine("Connecting to " + networkHandler.hostName);
             networkHandler.Connect();
 
             managerStream = new ChannelStream("manager", this);
@@ -117,7 +116,10 @@ namespace Cherry.Network
             return channels[channel];
         }
 
-
+        public void EnqueueMessage(Message message)
+        {
+            writeQueue.Enqueue(message);
+        }
         public void Disconnect()
         {
             networkHandler.Disconnect();

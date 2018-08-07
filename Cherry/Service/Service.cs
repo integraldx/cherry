@@ -11,8 +11,8 @@ namespace Cherry.Service
         public Service(ChannelStream stream)
         {
             this.stream = stream;
-            this.stream.ToReadEvent += Hello;
-            this.stream.ToReadEvent += Echo;
+            this.stream.NewMessageFromChannelEvent += Hello;
+            this.stream.NewMessageFromChannelEvent += Echo;
         }
 
         void Hello(Message message)

@@ -20,42 +20,19 @@ namespace Cherry.Network
         /// Handles Tcp network connection
         /// </summary>
         
-        protected IPAddress ipAddress;
-        protected TcpClient tcpClient;
-        protected int targetPort;
+        private IPAddress ipAddress;
+        private TcpClient tcpClient;
+        private int targetPort;
         private SslStream sslStream;
-        public IPHostEntry hostEntry;
-        protected readonly string localHostName = Dns.GetHostName();
-
-        
-
-        /// <summary>
-        /// Initalizes NetworkHandler object with ip and port
-        /// </summary>
-        /// <param name="ip"></param>
-        /// Target host's ip address
-        /// <param name="port"></param>
-        /// Target host's port number
-        public NetworkHandler(string ip, int port)
+        private IPHostEntry hostEntry;
+        private readonly string localHostName = Dns.GetHostName();
+        public string hostName
         {
-            
-            if(!IPAddress.TryParse(ip, out ipAddress))
+            get
             {
-                FormatException formatException = new FormatException("Invalid IP address.");
-                throw formatException;
-            }
-
-            if (!(0 < port && port < 65535))
-            {
-                FormatException formatException = new FormatException("Invalid Port number.");
-                throw formatException;
-            }
-            else
-            {
-                targetPort = port;
+                return hostEntry.HostName;
             }
         }
-
         public NetworkHandler(string url)
         {
             string[] urlInfo = url.Split(':');
@@ -92,6 +69,7 @@ namespace Cherry.Network
             Console.WriteLine("SSL connection failed.");
             throw new Exception();
         }
+
         private bool validateCertificate(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
         {
             /*
