@@ -61,12 +61,23 @@ namespace Cherry.Service
             {
                 if (message.content.StartsWith("!체리 옵뿌려"))
                 {
-                    Message op = new Message();
-                    op.command = Command.MODE;
-                    op.channel = message.channel;
-                    op.commandArgs.Add("+o");
-                    op.commandArgs.Add(message.speakerNickName);
-                    stream.WriteMessage(op);
+                    var enumerator = stream.users.GetEnumerator();
+                    enumerator.MoveNext();
+                    while (true)
+                    {
+                        try
+                        {
+                            Message op = new Message(Command.MODE, message.channel);
+                            op.commandArgs.Add("+o");
+                            op.commandArgs.Add(enumerator.Current.Value.nickName);
+                            stream.WriteMessage(op);
+                            enumerator.MoveNext();
+                        }
+                        catch(Exception e)
+                        {
+                            break;
+                        }
+                    }
                 }
             }
         }
