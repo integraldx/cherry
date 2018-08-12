@@ -12,7 +12,7 @@ namespace Cherry.Network
         string userName;
         string nickName;
         NetworkHandler networkHandler;
-        Dictionary<string, ChannelStream> channels = new Dictionary<string, ChannelStream>();
+        public Dictionary<string, ChannelStream> channels = new Dictionary<string, ChannelStream>();
         ChannelStream managerStream;
         Queue<Message> writeQueue = new Queue<Message>();
 

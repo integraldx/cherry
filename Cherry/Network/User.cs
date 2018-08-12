@@ -14,12 +14,11 @@ namespace Cherry.Network
         public static User Parse(string strToParse)
         {
             User user = new User();
-            if(strToParse[1] == '@')
+            if(strToParse[0] == '@')
             {
                 user.isOp = true;
             }
-            user.nickName = strToParse.Split("!")[0].TrimStart('@', ':');
-            user.userName = strToParse.Split("!")[1];
+            user.nickName = strToParse.Trim('@');
             return user;
         }
         public string ToFullString()
