@@ -13,6 +13,8 @@ namespace Cherry.Service
             this.stream = stream;
             this.stream.NewMessageFromChannelEvent += Hello;
             this.stream.NewMessageFromChannelEvent += Echo;
+            this.stream.NewMessageFromChannelEvent += GetName;
+            this.stream.NewMessageFromChannelEvent += GiveOP;
         }
 
         void Hello(Message message)
@@ -36,6 +38,37 @@ namespace Cherry.Service
         void Echo(Message message)
         {
             Console.WriteLine(message.origStr);
+        }
+
+        void GetName(Message message)
+        {
+            if(message.command == Command.PRIVMSG)
+            {
+                if (message.content.StartsWith("!체리 names"))
+                {
+                    Message name = new Message();
+                    name.command = Command.NAMES;
+                    name.channel = message.channel;
+                    stream.WriteMessage(name);
+                }
+            }
+            
+        }
+
+        void GiveOP(Message message)
+        {
+            if(message.command == Command.PRIVMSG)
+            {
+                if (message.content.StartsWith("!체리 옵뿌려"))
+                {
+                    Message op = new Message();
+                    op.command = Command.MODE;
+                    op.channel = message.channel;
+                    op.commandArgs.Add("+o");
+                    op.commandArgs.Add(message.speakerNickName);
+                    stream.WriteMessage(op);
+                }
+            }
         }
     }
 }
