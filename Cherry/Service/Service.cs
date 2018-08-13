@@ -63,21 +63,28 @@ namespace Cherry.Service
                 {
                     var enumerator = stream.users.GetEnumerator();
                     enumerator.MoveNext();
-                    while (true)
+                    foreach(KeyValuePair<string, User> u in stream.users)
                     {
-                        try
-                        {
-                            Message op = new Message(Command.MODE, message.channel);
-                            op.commandArgs.Add("+o");
-                            op.commandArgs.Add(enumerator.Current.Value.nickName);
-                            stream.WriteMessage(op);
-                            enumerator.MoveNext();
-                        }
-                        catch(Exception e)
-                        {
-                            break;
-                        }
+                        Message op = new Message(Command.MODE, message.channel);
+                        op.commandArgs.Add("+o");
+                        op.commandArgs.Add(u.Value.nickName);
+                        stream.WriteMessage(op);
                     }
+                    //while (true)
+                    //{
+                    //    try
+                    //    {
+                    //        Message op = new Message(Command.MODE, message.channel);
+                    //        op.commandArgs.Add("+o");
+                    //        op.commandArgs.Add(enumerator.Current.Value.nickName);
+                    //        stream.WriteMessage(op);
+                    //        enumerator.MoveNext();
+                    //    }
+                    //    catch(Exception e)
+                    //    {
+                    //        break;
+                    //    }
+                    //}
                 }
             }
         }
