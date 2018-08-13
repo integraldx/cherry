@@ -8,7 +8,7 @@ namespace Cherry.Network
     {
         string channelName;
         IRCHandler handler;
-        Dictionary<string, User> users;
+        public Dictionary<string, User> users = new Dictionary<string, User>();
         public delegate void OnRead(Message message);
         public event OnRead NewMessageFromChannelEvent;
         public ChannelStream(string channel, IRCHandler ircHandler)

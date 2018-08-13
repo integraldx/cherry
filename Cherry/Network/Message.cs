@@ -43,6 +43,12 @@ namespace Cherry.Network
                 case Command.INVITE:
                     returnStr = "INVITE " + commandArgs[0] + " " + commandArgs[1];
                     break;
+                case Command.NAMES:
+                    returnStr = "NAMES " + channel;
+                    break;
+                case Command.MODE:
+                    returnStr = "MODE " + channel + " " + commandArgs[0] + " " + commandArgs[1];
+                    break;
             }
             return returnStr;
         }
