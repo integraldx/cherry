@@ -13,7 +13,6 @@ namespace Cherry.Service
             this.stream = stream;
             this.stream.NewMessageFromChannelEvent += Hello;
             this.stream.NewMessageFromChannelEvent += Echo;
-            this.stream.NewMessageFromChannelEvent += GetName;
             this.stream.NewMessageFromChannelEvent += GiveOP;
         }
 
@@ -52,7 +51,6 @@ namespace Cherry.Service
                     stream.WriteMessage(name);
                 }
             }
-            
         }
 
         void GiveOP(Message message)
@@ -70,21 +68,6 @@ namespace Cherry.Service
                         op.commandArgs.Add(u.Value.nickName);
                         stream.WriteMessage(op);
                     }
-                    //while (true)
-                    //{
-                    //    try
-                    //    {
-                    //        Message op = new Message(Command.MODE, message.channel);
-                    //        op.commandArgs.Add("+o");
-                    //        op.commandArgs.Add(enumerator.Current.Value.nickName);
-                    //        stream.WriteMessage(op);
-                    //        enumerator.MoveNext();
-                    //    }
-                    //    catch(Exception e)
-                    //    {
-                    //        break;
-                    //    }
-                    //}
                 }
             }
         }

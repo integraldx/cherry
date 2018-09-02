@@ -87,13 +87,16 @@ namespace Cherry.Network
                     Message msgToChannels = Message.ToMessage(messageFromStream.Trim('\r'));
                     if (msgToChannels != null)
                     {
-                        if (msgToChannels.channel == string.Empty || msgToChannels.channel == "!Manager")
+                        if (msgToChannels.channel == string.Empty || msgToChannels.channel == "!Manager" || !channels.ContainsKey(msgToChannels.channel))
                         {
                             managerStream.InvokeReadBehavior(msgToChannels);
                         }
                         else
                         {
-                            channels[msgToChannels.channel].InvokeReadBehavior(msgToChannels);
+                            if (msgToChannels.speakerNickName != nickName)
+                            {
+                                channels[msgToChannels.channel].InvokeReadBehavior(msgToChannels);
+                            }
                         }
                     }
                 }
@@ -111,8 +114,8 @@ namespace Cherry.Network
             Message message = new Message();
             message.command = Command.JOIN;
             message.channel = channel;
-            this.writeQueue.Enqueue(message);
             channels.Add(channel, new ChannelStream(channel, this));
+            this.writeQueue.Enqueue(message);
             return channels[channel];
         }
 

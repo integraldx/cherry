@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Cherry.Network
 {
-    enum Command { PRIVMSG, MODE, PING, PONG, INVITE, TOPIC, LIST, NAMES, NOTICE, JOIN};
+    enum Command { PRIVMSG, MODE, PING, PONG, INVITE, TOPIC, LIST, NAMES, NOTICE, JOIN, PART};
     class Message
     {
         public string origStr;
@@ -108,6 +108,19 @@ namespace Cherry.Network
                         message.commandArgs[0] = strSplitBySpace[2];
                         message.commandArgs[1] = strSplitBySpace[3];
                         break;
+
+                    case "JOIN":
+                        message.command = Command.JOIN;
+                        message.channel = strSplitBySpace[2].TrimStart(':');
+                        break;
+
+                    case "PART":
+                        message.command = Command.PART;
+                        message.channel = strSplitBySpace[2];
+                        break;
+                    default:
+                        Console.WriteLine("Failed to parse string to Message.");
+                        break;
                 }
 
             }
@@ -120,6 +133,9 @@ namespace Cherry.Network
                         message.command = Network.Command.PING;
                         message.channel = "!Manager";
                         message.commandArgs.Add(strSplitBySpace[1].Trim(':'));
+                        break;
+                    default:
+                        Console.WriteLine("Failed to parse string to Message.");
                         break;
                 }
             }
