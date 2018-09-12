@@ -103,11 +103,11 @@ namespace Cherry.Network
                     case "MODE":
                         message.command = Network.Command.MODE;
                         break;
-                    case "INVITE":
-                        message.command = Command.INVITE;
-                        message.commandArgs[0] = strSplitBySpace[2];
-                        message.commandArgs[1] = strSplitBySpace[3];
-                        break;
+                    //case "INVITE":
+                    //    message.command = Command.INVITE;
+                    //    message.commandArgs[0] = strSplitBySpace[2];
+                    //    message.commandArgs[1] = strSplitBySpace[3];
+                    //    break;
 
                     case "JOIN":
                         message.command = Command.JOIN;
