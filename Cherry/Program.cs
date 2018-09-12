@@ -9,7 +9,7 @@ namespace Cherry
         static void Main(string[] args)
         {
             ServiceManager serviceManager = new ServiceManager(new IRCHandler(new NetworkHandler("irc.uriirc.org:16667"), "cherry", "Cherry"));
-            serviceManager.AssignNewServiceToChannel("#botTestintint");
+            serviceManager.AssignNewServiceToChannel("#Integral");
         }
     }
 }
