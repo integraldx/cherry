@@ -19,6 +19,7 @@ namespace Cherry.Service
             managerStream.NewMessageFromChannelEvent += PingResponse;
             managerStream.NewMessageFromChannelEvent += Echo;
             managerStream.NewMessageFromChannelEvent += HandleChannelNames;
+            managerStream.NewMessageFromChannelEvent += JoinInvitedChannel;
         }
         
 
@@ -67,5 +68,12 @@ namespace Cherry.Service
             Console.WriteLine(message.origStr);
         }
 
+        void JoinInvitedChannel(Message message)
+        {
+            if(message.command == Command.INVITE)
+            {
+                serviceList.Add(new Service(ircHandler.Join(message.commandArgs[1])));
+            }
+        }
     }
 }

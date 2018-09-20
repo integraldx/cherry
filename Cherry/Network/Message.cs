@@ -107,11 +107,11 @@ namespace Cherry.Network
                         message.commandArgs.Add(strSplitBySpace[4]);
 
                         break;
-                    //case "INVITE":
-                    //    message.command = Command.INVITE;
-                    //    message.commandArgs[0] = strSplitBySpace[2];
-                    //    message.commandArgs[1] = strSplitBySpace[3];
-                    //    break;
+                    case "INVITE":
+                        message.command = Command.INVITE;
+                        message.commandArgs.Add(strSplitBySpace[2]);
+                        message.commandArgs.Add(strSplitBySpace[3].TrimStart(':'));
+                        break;
 
                     case "JOIN":
                         message.command = Command.JOIN;

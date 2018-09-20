@@ -8,8 +8,11 @@ namespace Cherry
     {
         static void Main(string[] args)
         {
-            ServiceManager serviceManager = new ServiceManager(new IRCHandler(new NetworkHandler("irc.uriirc.org:16667"), "cherry", "Cherry"));
-            serviceManager.AssignNewServiceToChannel("#botTestintint");
+            if(args.Length == 0)
+            {
+                Console.WriteLine("Please Input IRC server's url with port number at arguments");
+            }
+            ServiceManager serviceManager = new ServiceManager(new IRCHandler(new NetworkHandler(args[0]), "cherry","Cherry"));
         }
     }
 }
