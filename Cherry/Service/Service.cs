@@ -14,6 +14,7 @@ namespace Cherry.Service
             this.stream.NewMessageFromChannelEvent += Hello;
             this.stream.NewMessageFromChannelEvent += Echo;
             this.stream.NewMessageFromChannelEvent += GiveOP;
+            this.stream.NewMessageFromChannelEvent += TrackUserState;
         }
 
         void Hello(Message message)
@@ -63,11 +64,31 @@ namespace Cherry.Service
                     enumerator.MoveNext();
                     foreach(KeyValuePair<string, User> u in stream.users)
                     {
-                        Message op = new Message(Command.MODE, message.channel);
-                        op.commandArgs.Add("+o");
-                        op.commandArgs.Add(u.Value.nickName);
-                        stream.WriteMessage(op);
+                        if (!u.Value.isOp)
+                        {
+                            Message op = new Message(Command.MODE, message.channel);
+                            op.commandArgs.Add("+o");
+                            op.commandArgs.Add(u.Value.nickName);
+                            stream.WriteMessage(op);
+                            u.Value.isOp = true;
+                        }
                     }
+                }
+            }
+        }
+
+        void TrackUserState(Message message)
+        {
+            if(message.command == Command.MODE)
+            {
+                if(message.commandArgs[0] == "+o")
+                {
+                    stream.users[message.commandArgs[1]].isOp = true;
+                    
+                }
+                else if(message.commandArgs[0] == "-o")
+                {
+                    stream.users[message.commandArgs[1]].isOp = false;
                 }
             }
         }

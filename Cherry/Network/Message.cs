@@ -102,6 +102,10 @@ namespace Cherry.Network
                         break;
                     case "MODE":
                         message.command = Network.Command.MODE;
+                        message.channel = strSplitBySpace[2];
+                        message.commandArgs.Add(strSplitBySpace[3]);
+                        message.commandArgs.Add(strSplitBySpace[4]);
+
                         break;
                     //case "INVITE":
                     //    message.command = Command.INVITE;

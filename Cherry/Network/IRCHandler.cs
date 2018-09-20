@@ -59,6 +59,8 @@ namespace Cherry.Network
                     
                     networkHandler.Write(stringToSend + "\n");
                     Console.WriteLine(stringToSend);
+
+                    Thread.Sleep(100);
                 }
             }
         }
