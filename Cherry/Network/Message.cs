@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Cherry.Network
 {
-    enum Command { PRIVMSG, MODE, PING, PONG, INVITE, TOPIC, LIST, NAMES, NOTICE, JOIN, PART};
+    enum Command { PRIVMSG, MODE, PING, PONG, INVITE, TOPIC, LIST, NAMES, NOTICE, JOIN, PART, KICK};
     class Message
     {
         public string origStr;
@@ -49,14 +49,17 @@ namespace Cherry.Network
                 case Command.MODE:
                     returnStr = "MODE " + channel + " " + commandArgs[0] + " " + commandArgs[1];
                     break;
+                case Command.KICK:
+                    returnStr = "KICK " + channel + " " + commandArgs[0];
+                    break;
             }
             return returnStr;
         }
 
         public static Message ToMessage(string fromString)
         {
-
-            if (fromString == String.Empty)
+            fromString = fromString.Trim();
+            if (fromString == String.Empty || fromString.Length == 0)
             {
                 return null;
             }
@@ -96,8 +99,6 @@ namespace Cherry.Network
                             {
                                 break;
                             }
-                            
-                       
                         }
                         break;
                     case "MODE":
@@ -121,6 +122,11 @@ namespace Cherry.Network
                     case "PART":
                         message.command = Command.PART;
                         message.channel = strSplitBySpace[2];
+                        break;
+                    case "KICK":
+                        message.command = Command.KICK;
+                        message.channel = strSplitBySpace[2];
+                        message.commandArgs.Add(strSplitBySpace[3]);
                         break;
                     default:
                         Console.WriteLine("Failed to parse string to Message.");

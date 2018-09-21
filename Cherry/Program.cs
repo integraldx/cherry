@@ -11,8 +11,9 @@ namespace Cherry
             if(args.Length == 0)
             {
                 Console.WriteLine("Please Input IRC server's url with port number at arguments");
+                return;
             }
-            ServiceManager serviceManager = new ServiceManager(new IRCHandler(new NetworkHandler(args[0]), "cherry","Cherry"));
+            ServiceManager serviceManager = new ServiceManager(new IRCHandler(new NetworkHandler(args[0]), "cherryT","CherryT"));
         }
     }
 }

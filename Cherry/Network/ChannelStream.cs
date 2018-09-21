@@ -34,11 +34,11 @@ namespace Cherry.Network
             {
                 if (users.ContainsKey(message.speakerNickName))
                 {
-
+                    Console.WriteLine(message.speakerNickName + "Alrealy exsists on users list.");
                 }
                 else
                 {
-                    users.Add(message.speakerNickName, User.Parse(message.speakerNickName + "!" + message.speakerRealName));
+                    users.Add(message.speakerNickName, User.Parse(message.speakerNickName));
                     Console.WriteLine("{0} joins channel", message.speakerNickName);
                 }
 
@@ -55,6 +55,24 @@ namespace Cherry.Network
                     Console.WriteLine("{0} not found in channel user data. WTF?!", message.speakerNickName);
                 }
             }
+            else if(message.command == Command.KICK)
+            {
+                users.Remove(message.commandArgs[0]);
+            }
+            else if (message.command == Command.MODE)
+            {
+                if (message.commandArgs[0] == "+o")
+                {
+                    users[message.commandArgs[1]].isOp = true;
+
+                }
+                else if (message.commandArgs[0] == "-o")
+                {
+                    users[message.commandArgs[1]].isOp = false;
+                }
+            }
         }
+
+
     }
 }

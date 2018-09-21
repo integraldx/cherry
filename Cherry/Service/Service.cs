@@ -14,7 +14,6 @@ namespace Cherry.Service
             this.stream.NewMessageFromChannelEvent += Hello;
             this.stream.NewMessageFromChannelEvent += Echo;
             this.stream.NewMessageFromChannelEvent += GiveOP;
-            this.stream.NewMessageFromChannelEvent += TrackUserState;
         }
 
         void Hello(Message message)
@@ -77,20 +76,6 @@ namespace Cherry.Service
             }
         }
 
-        void TrackUserState(Message message)
-        {
-            if(message.command == Command.MODE)
-            {
-                if(message.commandArgs[0] == "+o")
-                {
-                    stream.users[message.commandArgs[1]].isOp = true;
-                    
-                }
-                else if(message.commandArgs[0] == "-o")
-                {
-                    stream.users[message.commandArgs[1]].isOp = false;
-                }
-            }
-        }
+        
     }
 }
