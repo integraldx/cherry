@@ -72,7 +72,7 @@ namespace Cherry.Service
         {
             if(message.command == Command.INVITE)
             {
-                serviceList.Add(new Service(ircHandler.Join(message.commandArgs[1])));
+                AssignNewServiceToChannel(message.commandArgs[1]);
             }
         }
     }
