@@ -10,7 +10,7 @@ namespace Cherry.Network
     class IRCHandler
     {
         string userName;
-        string nickName;
+        public string NickName { get; private set; }
         NetworkHandler networkHandler;
         public Dictionary<string, ChannelStream> channels = new Dictionary<string, ChannelStream>();
         ChannelStream managerStream;
@@ -20,7 +20,7 @@ namespace Cherry.Network
         {
             this.networkHandler = networkHandler;
             this.userName = userName;
-            this.nickName = nickName;
+            this.NickName = nickName;
         }
 
         public ChannelStream Connect()
@@ -32,7 +32,7 @@ namespace Cherry.Network
 
             networkHandler.Write("USER guest 0 * :" + userName + "\n");
             networkHandler.Write("PASS test\n");
-            networkHandler.Write("NICK " + nickName + "\n");
+            networkHandler.Write("NICK " + NickName + "\n");
             StartWrite();
             StartRead();
 
@@ -95,7 +95,7 @@ namespace Cherry.Network
                         }
                         else
                         {
-                            if (msgToChannels.speakerNickName != nickName)
+                            if (msgToChannels.speakerNickName != NickName)
                             {
                                 channels[msgToChannels.channel].InvokeReadBehavior(msgToChannels);
                             }
@@ -116,7 +116,11 @@ namespace Cherry.Network
             Message message = new Message();
             message.command = Command.JOIN;
             message.channel = channel;
-            channels.Add(channel, new ChannelStream(channel, this));
+
+            if (!channels.ContainsKey(channel))
+            {
+                channels.Add(channel, new ChannelStream(channel, this));
+            }
             this.writeQueue.Enqueue(message);
             return channels[channel];
         }
@@ -128,6 +132,14 @@ namespace Cherry.Network
         public void Disconnect()
         {
             networkHandler.Disconnect();
+        }
+
+        void RemoveChannel(string channel)
+        {
+            if (channels.ContainsKey(channel))
+            {
+                channels.Remove(channel);
+            }
         }
     }
 }

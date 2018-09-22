@@ -8,7 +8,7 @@ namespace Cherry.Service
     class ServiceManager
     {
         ChannelStream managerStream;
-        List<Service> serviceList = new List<Service>();
+        Dictionary<ChannelStream, Service> serviceList = new Dictionary<ChannelStream, Service>();
         IRCHandler ircHandler;
 
         public ServiceManager(IRCHandler ircHandler)
@@ -21,18 +21,10 @@ namespace Cherry.Service
             managerStream.NewMessageFromChannelEvent += HandleChannelNames;
             managerStream.NewMessageFromChannelEvent += JoinInvitedChannel;
         }
-        
-
-        public void AssignNewServiceToChannel(string channel)
-        {
-            ChannelStream channelStream = ircHandler.Join(channel);
-            serviceList.Add(new Service(channelStream));
-        }
 
         void HandleChannelNames(Message message)
         {
-            
-            if(message.origStr.Split(' ').Length > 5 && message.origStr.Split(' ')[3] == "=")
+            if(message.origStr.Split(' ')[1] == "353")
             {
                 ChannelStream channel = ircHandler.channels[message.origStr.Split(' ')[4]];
                 int iter0 = 5;
@@ -41,7 +33,7 @@ namespace Cherry.Service
                     try
                     {
                         User user = User.Parse(message.origStr.Split(' ')[iter0].TrimStart(':'));
-                        channel.users.Add(user.nickName, user);
+                        channel.AssignNewUserInManagmentList(user);
                         iter0++;
                     }
                     catch (IndexOutOfRangeException e)
@@ -73,6 +65,15 @@ namespace Cherry.Service
             if(message.command == Command.INVITE)
             {
                 AssignNewServiceToChannel(message.commandArgs[1]);
+            }
+        }
+
+        public void AssignNewServiceToChannel(string channel)
+        {
+            ChannelStream channelStream = ircHandler.Join(channel);
+            if (!serviceList.ContainsKey(channelStream))
+            {
+                serviceList.Add(channelStream, new Service(channelStream));
             }
         }
     }

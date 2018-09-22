@@ -7,6 +7,13 @@ namespace Cherry.Network
     class ChannelStream
     {
         string channelName;
+        public string SelfName
+        {
+            get
+            {
+                return handler.NickName;
+            }
+        }
         IRCHandler handler;
         public Dictionary<string, User> users = new Dictionary<string, User>();
         public delegate void OnRead(Message message);
@@ -32,47 +39,74 @@ namespace Cherry.Network
         {
             if(message.command == Command.JOIN)
             {
-                if (users.ContainsKey(message.speakerNickName))
-                {
-                    Console.WriteLine(message.speakerNickName + "Alrealy exsists on users list.");
-                }
-                else
-                {
-                    users.Add(message.speakerNickName, User.Parse(message.speakerNickName));
-                    Console.WriteLine("{0} joins channel", message.speakerNickName);
-                }
-
+                AssignNewUserInManagmentList(User.Parse(message.speakerNickName));
             }
             else if(message.command == Command.PART)
             {
-                if (users.ContainsKey(message.speakerNickName))
-                {
-                    users.Remove(message.speakerNickName);
-                    Console.WriteLine("{0} leaves channel", message.speakerNickName);
-                }
-                else
-                {
-                    Console.WriteLine("{0} not found in channel user data. WTF?!", message.speakerNickName);
-                }
+                RemoveUserFromManagmentList(message.speakerNickName);
             }
             else if(message.command == Command.KICK)
             {
-                users.Remove(message.commandArgs[0]);
+                RemoveUserFromManagmentList(message.commandArgs[0]);
+
+                if(message.commandArgs[0] == handler.NickName)
+                {
+                    
+                }
             }
             else if (message.command == Command.MODE)
             {
-                if (message.commandArgs[0] == "+o")
+                if (users.ContainsKey(message.commandArgs[1]))
+                {                                   
+                    if (message.commandArgs[0] == "+o")
+                    {                               
+                        users[message.commandArgs[1]].isOp = true;
+                                                    
+                    }                               
+                    else if (message.commandArgs[0] == "-o")
+                    {                               
+                        users[message.commandArgs[1]].isOp = false;
+                    }                               
+                }
+                else
                 {
-                    users[message.commandArgs[1]].isOp = true;
+                    Console.WriteLine("User not found!");
+                    RefreshChannelUsers();
+                }
+                                                    
+            }                                       
+        }                                           
+                                                    
+        void RefreshChannelUsers()
+        {
+            Message nick = new Message();
+            nick.command = Command.NAMES;
 
-                }
-                else if (message.commandArgs[0] == "-o")
-                {
-                    users[message.commandArgs[1]].isOp = false;
-                }
+
+        }               
+        
+        public void AssignNewUserInManagmentList(User user)
+        {
+            if (users.ContainsKey(user.nickName))
+            {
+                Console.WriteLine($"{user.nickName} already exists in list");
+            }
+            else
+            {
+                users.Add(user.nickName, user);
             }
         }
-
+        public void RemoveUserFromManagmentList(string userNick)
+        {
+            if (users.ContainsKey(userNick))
+            {
+                users.Remove(userNick);
+            }
+            else
+            {
+                Console.WriteLine($"{userNick} not found in users list.");
+            }
+        }
 
     }
 }
