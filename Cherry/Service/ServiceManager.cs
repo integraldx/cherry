@@ -24,7 +24,8 @@ namespace Cherry.Service
 
         void HandleChannelNames(Message message)
         {
-            if(message.origStr.Split(' ')[1] == "353")
+
+            if(message.origStr.Split(' ').Length > 5 && message.origStr.Split(' ')[1] == "353")
             {
                 ChannelStream channel = ircHandler.channels[message.origStr.Split(' ')[4]];
                 int iter0 = 5;
