@@ -52,15 +52,19 @@ namespace Cherry.Network
         {
             while (true)
             {
-                if(writeQueue.Count > 0)
+                if (writeQueue.Count > 0)
                 {
                     Message messageToSend = writeQueue.Dequeue();
                     string stringToSend = messageToSend.ToString();
-                    
+
                     networkHandler.Write(stringToSend + "\n");
                     Console.WriteLine(stringToSend);
 
                     Thread.Sleep(100);
+                }
+                else
+                {
+                    Thread.Sleep(500);
                 }
             }
         }
