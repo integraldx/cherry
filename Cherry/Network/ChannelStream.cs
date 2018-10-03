@@ -71,28 +71,16 @@ namespace Cherry.Network
                 else
                 {
                     Console.WriteLine("User not found!");
-                    RefreshChannelUsers();
                 }
                                                     
             }                                       
-        }                                           
-                                                    
-        void RefreshChannelUsers()
-        {
-            
-            Message nick = new Message();
-            nick.command = Command.NAMES;
-            nick.channel = channelName;
-            WriteMessage(nick);
-
-        }               
+        }                 
         
         public void AssignNewUserInManagmentList(User user)
         {
             if (users.ContainsKey(user.nickName))
             {
                 Console.WriteLine($"{user.nickName} already exists in list");
-                RefreshChannelUsers();
             }
             else
             {
@@ -108,7 +96,6 @@ namespace Cherry.Network
             else
             {
                 Console.WriteLine($"{userNick} not found in users list.");
-                RefreshChannelUsers();
             }
         }
 

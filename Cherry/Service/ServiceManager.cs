@@ -53,7 +53,20 @@ namespace Cherry.Service
                 msg.command = Command.PONG;
                 msg.commandArgs = message.commandArgs;
                 managerStream.WriteMessage(msg);
+
+                foreach (var channel in ircHandler.channels)
+                {
+                    if (channel.Key == "manager")
+                    {
+                        break;
+                    }
+                    Message channelName = new Message();
+                    channelName.command = Command.NAMES;
+                    channelName.channel = channel.Key;
+                    managerStream.WriteMessage(channelName);
+                }
             }
+            
         }
 
         void Echo(Message message)
