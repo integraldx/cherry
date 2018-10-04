@@ -78,14 +78,15 @@ namespace Cherry.Network
         
         public void AssignNewUserInManagmentList(User user)
         {
-            if (users.ContainsKey(user.nickName))
-            {
-                Console.WriteLine($"{user.nickName} already exists in list");
-            }
-            else
+            if (!users.ContainsKey(user.nickName))
             {
                 users.Add(user.nickName, user);
             }
+            else if(users[user.nickName].isOp != user.isOp)
+            {
+                users[user.nickName].isOp = user.isOp;
+            }
+            
         }
         public void RemoveUserFromManagmentList(string userNick)
         {
