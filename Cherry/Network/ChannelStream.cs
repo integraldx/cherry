@@ -90,6 +90,10 @@ namespace Cherry.Network
         }
         public void RemoveUserFromManagmentList(string userNick)
         {
+            if (userNick.StartsWith('@'))
+            {
+                userNick = userNick.TrimStart('@');
+            }
             if (users.ContainsKey(userNick))
             {
                 users.Remove(userNick);
