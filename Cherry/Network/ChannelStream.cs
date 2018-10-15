@@ -103,6 +103,7 @@ namespace Cherry.Network
                 Console.WriteLine($"{userNick} not found in users list.");
             }
         }
+        
 
     }
 }

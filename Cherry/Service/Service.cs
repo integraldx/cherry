@@ -14,6 +14,7 @@ namespace Cherry.Service
             this.stream.NewMessageFromChannelEvent += Hello;
             this.stream.NewMessageFromChannelEvent += Echo;
             this.stream.NewMessageFromChannelEvent += SpreadOP;
+            this.stream.NewMessageFromChannelEvent += ManageChannelService;
         }
 
         void Hello(Message message)
@@ -68,7 +69,49 @@ namespace Cherry.Service
                 }
             }
         }
-
         
+        void ManageChannelService(Message message)
+        {
+            if(message.command == Command.PRIVMSG)
+            {
+                if(message.content.StartsWith("!체리 기능"))
+                {
+                    String command = message.content.Remove(0, 7);
+
+                    if (command.StartsWith('+'))
+                    {
+                        command = command.TrimStart('+');
+                        switch (command)
+                        {
+                            case "옵뿌려":
+                                stream.NewMessageFromChannelEvent += SpreadOP;
+                                Console.WriteLine("+SpreadOP");
+                                break;
+                            case "안녕":
+                                stream.NewMessageFromChannelEvent += Hello;
+                                Console.WriteLine("+Hello");
+                                break;
+                                
+                        }
+                    }
+                    else if (command.StartsWith('-'))
+                    {
+                        command = command.TrimStart('-');
+
+                        switch (command)
+                        {
+                            case "옵뿌려":
+                                stream.NewMessageFromChannelEvent -= SpreadOP;
+                                Console.WriteLine("-SpreadOP");
+                                break;
+                            case "안녕":
+                                stream.NewMessageFromChannelEvent -= Hello;
+                                Console.WriteLine("-Hello");
+                                break;
+                        }
+                    }
+                }
+            }
+        }
     }
 }

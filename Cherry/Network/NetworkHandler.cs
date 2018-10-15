@@ -1,14 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Text;
-using System.Linq;
 using System.Net.Sockets;
-using System.Net.WebSockets;
-using System.Net.NetworkInformation;
 using System.Net;
 using System.Net.Security;
-using System.Security.Authentication;
-using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 
 
@@ -33,6 +27,7 @@ namespace Cherry.Network
                 return hostEntry.HostName;
             }
         }
+
         public NetworkHandler(string url)
         {
             string[] urlInfo = url.Split(':');
