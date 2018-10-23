@@ -20,6 +20,7 @@ namespace Cherry.Service
             managerStream.NewMessageFromChannelEvent += Echo;
             managerStream.NewMessageFromChannelEvent += HandleChannelNames;
             managerStream.NewMessageFromChannelEvent += JoinInvitedChannel;
+            managerStream.NewMessageFromChannelEvent += HandleQuittedUser;
         }
 
         void HandleChannelNames(Message message)
@@ -88,6 +89,17 @@ namespace Cherry.Service
             if (!serviceList.ContainsKey(channelStream))
             {
                 serviceList.Add(channelStream, new Service(channelStream));
+            }
+        }
+
+        void HandleQuittedUser(Message message)
+        {
+            if(message.command == Command.QUIT)
+            {
+                foreach(var channel in ircHandler.channels)
+                {
+                    channel.Value.RemoveUserFromManagmentList(message.speakerNickName);
+                }
             }
         }
     }
