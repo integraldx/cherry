@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Discord;
 using Discord.WebSocket;
 
@@ -18,6 +15,14 @@ namespace Cherry.Discord
             discordClient.MessageReceived += MessageReceived;
         }
 
+        private async Task MainAsync()
+        {
+            await discordClient.LoginAsync(TokenType.Bot, botLoginToken);
+            await discordClient.StartAsync();
+
+            await Task.Delay(-1);
+        }
+
         public void addMessageHandler(MessageHandler func)
         {
             messageHandler += func;
@@ -30,6 +35,9 @@ namespace Cherry.Discord
 
         private async Task MessageReceived(SocketMessage message)
         {
+            if (message.Author.Id == discordClient.CurrentUser.Id)
+                return;
+
             messageHandler.BeginInvoke(parseDiscordMessage(message), null, null);
         }
 
