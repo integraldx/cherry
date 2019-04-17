@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Cherry
+namespace Cherry.Shared
 {
-    delegate int MessageHandler(Message m);
+    public delegate void MessageHandler(Message m);
     public class Message
     {
         public class User
@@ -17,6 +17,12 @@ namespace Cherry
         {
             public string name;
             public string id;
+        }
+
+        public Message()
+        {
+            speakingChannel = new Channel();
+            Author = new User();
         }
         public string Content { get; set; }
         public User Author { get; set; }

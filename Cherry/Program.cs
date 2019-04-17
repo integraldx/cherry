@@ -1,43 +1,40 @@
 ﻿using System;
-using Discord;
-using Discord.API;
-using Discord.WebSocket;
-using System.Threading.Tasks;
+using System.Reflection;
 
 namespace Cherry
 {
     class Program
     {
-        private readonly DiscordSocketClient _client;
-        private static string token;
         static void Main(string[] args)
         {
+            string token;
+            Console.Write("Bot Token : ");
             token = Console.ReadLine();
-            new Program().MainAsync().GetAwaiter().GetResult();
-        }
+            Console.Write("dll path : ");
+            string dllPath = Console.ReadLine();
 
-        public Program()
-        {
-            _client = new DiscordSocketClient();
+            Assembly asm = Assembly.LoadFrom(dllPath);
 
-            _client.MessageReceived += MessageReceivedAsync;
-        }
+            Type pluginType = typeof(Shared.ICherryPlugin);
+            Type targ = typeof(Shared.ICherryPlugin);
+            foreach(Type t in asm.GetTypes())
+            {
+                if(t.IsAbstract || t.IsInterface)
+                {
+                    continue;
+                }
+                else if(t.GetInterface(pluginType.FullName) != null)
+                {
+                    targ = t;
+                    break;
+                }
+            }
+            Shared.ICherryPlugin p = (Shared.ICherryPlugin)Activator.CreateInstance(targ);
 
-        public async Task MainAsync()
-        {
-            await _client.LoginAsync(TokenType.Bot, token);
-            await _client.StartAsync();
-
-            await Task.Delay(-1);
-        }
-        private async Task MessageReceivedAsync(SocketMessage message)
-        {
-            // The bot should never respond to itself.
-            if (message.Author.Id == _client.CurrentUser.Id)
-                return;
-
-            if (message.Content == "!ping")
-                await message.Channel.SendMessageAsync("pong!");
+            Discord.Discord d = new Discord.Discord(token);
+            d.addMessageHandler(p.MessageHandler);
+            p.SetMessageSendTarget(d.sendMessage);
+            d.MainAsync().GetAwaiter().GetResult();
         }
     }
 }

@@ -1,25 +1,26 @@
 ﻿using System.Threading.Tasks;
+using System;
 using Discord;
 using Discord.WebSocket;
+using Cherry.Shared;
 
 namespace Cherry.Discord
 {
     class Discord
     {
-        private readonly DiscordSocketClient discordClient;
+        private readonly DiscordSocketClient discordClient = new DiscordSocketClient();
         private string botLoginToken;
         private event MessageHandler messageHandler;
-        Discord(string token)
+        public Discord(string token)
         {
             botLoginToken = token;
             discordClient.MessageReceived += MessageReceived;
         }
 
-        private async Task MainAsync()
+        public async Task MainAsync()
         {
             await discordClient.LoginAsync(TokenType.Bot, botLoginToken);
             await discordClient.StartAsync();
-
             await Task.Delay(-1);
         }
 
@@ -35,16 +36,17 @@ namespace Cherry.Discord
 
         private async Task MessageReceived(SocketMessage message)
         {
+            Console.WriteLine(message.Content);
             if (message.Author.Id == discordClient.CurrentUser.Id)
                 return;
 
-            messageHandler.BeginInvoke(parseDiscordMessage(message), null, null);
+            messageHandler.Invoke(parseDiscordMessage(message));
         }
 
-        private async Task sendMessage(Message m)
+        public void sendMessage(Message m)
         {
             var channel = (ISocketMessageChannel)discordClient.GetChannel(ulong.Parse(m.speakingChannel.id));
-            await channel.SendMessageAsync(m.Content);
+            channel.SendMessageAsync(m.Content);
         }
 
         private Message parseDiscordMessage(SocketMessage s)
