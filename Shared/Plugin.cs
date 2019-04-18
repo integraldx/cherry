@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Cherry.Shared
 {
@@ -7,8 +8,5 @@ namespace Cherry.Shared
         void MessageHandler(Message m);
 
         void SetMessageSendTarget(MessageHandler m);
-    }
-    public class Plugin
-    {
     }
 }
