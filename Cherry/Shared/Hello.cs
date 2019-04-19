@@ -8,10 +8,10 @@ namespace Cherry.Shared.Plugins
         void ICherryPlugin.MessageHandler(Message m)
         {
             Message send = new Message();
-            if(m.Content == "!ping")
+            if(m.Content == "!체리 안녕")
             {
                 send.speakingChannel = m.speakingChannel;
-                send.Content = "pong!";
+                send.Content = "안녕하세요!";
             }
 
             sendTarget.Invoke(send);

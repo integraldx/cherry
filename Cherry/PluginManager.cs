@@ -2,16 +2,15 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
-using System.Linq;
-using System.Text;
 
 namespace Cherry
 {
     static class PluginManager
     {
-        static private List<Shared.ICherryPlugin> pluginList = new List<Shared.ICherryPlugin>();
+        public static List<Shared.ICherryPlugin> pluginList = new List<Shared.ICherryPlugin>();
         public static void LoadPlugins(Settings settings)
         {
+            pluginList.Clear();
             if(!Directory.Exists("./Plugins"))
             {
                 Directory.CreateDirectory("./Plugins");

@@ -6,12 +6,22 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Plugins\**" />
+    <Compile Remove="Shared\**" />
+    <EmbeddedResource Remove="Plugins\**" />
+    <EmbeddedResource Remove="Shared\**" />
+    <None Remove="Plugins\**" />
+    <None Remove="Shared\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Discord.Net" Version="2.0.1" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Shared\Shared.csproj" />
+    <ProjectReference Include="Plugins\Hello\Hello.csproj" />
+    <ProjectReference Include="Shared\Shared.csproj" />
   </ItemGroup>
 
 </Project>

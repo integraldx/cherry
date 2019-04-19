@@ -29,6 +29,12 @@ namespace Cherry.Discord
             messageHandler += func;
         }
 
+        public void resetMessageHandler(MessageHandler func)
+        {
+            messageHandler -= messageHandler;
+            messageHandler += func;
+        }
+
         private void LoginAsBot()
         {
             discordClient.LoginAsync(TokenType.Bot, botLoginToken);
@@ -49,7 +55,7 @@ namespace Cherry.Discord
             channel.SendMessageAsync(m.Content);
         }
 
-        private Message parseDiscordMessage(SocketMessage s)
+        static private Message parseDiscordMessage(SocketMessage s)
         {
             Message m = new Message();
 

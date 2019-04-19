@@ -25,6 +25,7 @@ namespace Cherry
 
             byte[] byteArray = new byte[8192];
             settingsFileStream.Read(byteArray, 0, 8192);
+            settingsFileStream.Close();
 
 
             var jsonObject = JObject.Parse(Encoding.UTF8.GetString(byteArray));
@@ -35,6 +36,7 @@ namespace Cherry
                 pluginNames.Add(i.ToString());
                 Console.WriteLine(i.ToString());
             }
+            
         }
 
         public void SetBotToken(string token)
