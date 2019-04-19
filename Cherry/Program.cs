@@ -1,19 +1,33 @@
 ﻿using System;
-using Cherry.Network;
-using Cherry.Service;
+using System.Reflection;
 
 namespace Cherry
 {
     class Program
     {
+        static Discord.Discord d;
         static void Main(string[] args)
         {
-            if(args.Length == 0)
+            Settings s = new Settings();
+            PluginManager.LoadPlugins(s);
+
+            d = new Discord.Discord(s.BotToken);
+            d.addMessageHandler(PluginManager.GetPluginMessageHandlers());
+            PluginManager.SetPluginsMessageSendTarget(d.sendMessage);
+            d.MainAsync();
+            while(true)
             {
-                Console.WriteLine("Please Input IRC server's url with port number at arguments");
-                return;
+                string command = Console.ReadLine();
+                switch(command)
+                {
+                    case "reload":
+                        s = new Settings();
+                        PluginManager.LoadPlugins(s);
+                        d.resetMessageHandler(PluginManager.GetPluginMessageHandlers());
+                        PluginManager.SetPluginsMessageSendTarget(d.sendMessage);
+                        break;
+                }
             }
-            ServiceManager serviceManager = new ServiceManager(new IRCHandler(new NetworkHandler(args[0]), "cherryT","CherryT"));
         }
     }
 }

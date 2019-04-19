@@ -1,8 +1,7 @@
 {
   "profiles": {
     "Cherry": {
-      "commandName": "Project",
-      "commandLineArgs": "irc.uriirc.org:16667"
+      "commandName": "Project"
     }
   }
 }
