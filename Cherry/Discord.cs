@@ -49,6 +49,12 @@ namespace Cherry.Discord
             messageHandler.Invoke(parseDiscordMessage(message));
         }
 
+        public void logout()
+        {
+            discordClient.StopAsync();
+            discordClient.LogoutAsync();
+        }
+
         public void sendMessage(Message m)
         {
             var channel = (ISocketMessageChannel)discordClient.GetChannel(ulong.Parse(m.speakingChannel.id));
