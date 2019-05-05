@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using Cherry.Shared;
 
 namespace Cherry
 {
@@ -53,6 +54,14 @@ namespace Cherry
             foreach(var i in pluginList)
             {
                 i.SetMessageSendTarget(m);
+            }
+        }
+
+        public static void FeedSettingsToPlugins(Shared.Settings s)
+        {
+            foreach(var i in pluginList)
+            {
+                i.SetRequiredSettings(s);
             }
         }
     }

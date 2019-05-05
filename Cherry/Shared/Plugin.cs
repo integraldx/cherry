@@ -8,5 +8,7 @@ namespace Cherry.Shared
         void MessageHandler(Message m);
 
         void SetMessageSendTarget(MessageHandler m);
+
+        void SetRequiredSettings(Settings s);
     }
 }

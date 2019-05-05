@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Hello", "Cherry\Plugins\Hel
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Shared", "Cherry\Shared\Shared.csproj", "{9938FE77-077C-45D3-BCBC-61454F14B02B}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Weather", "Cherry\Plugins\Weather\Weather.csproj", "{7D4E1847-A391-4F4F-9C4F-F25711AA0AA2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{9938FE77-077C-45D3-BCBC-61454F14B02B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9938FE77-077C-45D3-BCBC-61454F14B02B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9938FE77-077C-45D3-BCBC-61454F14B02B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7D4E1847-A391-4F4F-9C4F-F25711AA0AA2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7D4E1847-A391-4F4F-9C4F-F25711AA0AA2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7D4E1847-A391-4F4F-9C4F-F25711AA0AA2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7D4E1847-A391-4F4F-9C4F-F25711AA0AA2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

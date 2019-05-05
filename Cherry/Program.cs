@@ -1,4 +1,5 @@
 ﻿using System;
+using Cherry.Shared;
 using System.Reflection;
 
 namespace Cherry
@@ -15,8 +16,10 @@ namespace Cherry
             d.addMessageHandler(PluginManager.GetPluginMessageHandlers());
             PluginManager.SetPluginsMessageSendTarget(d.sendMessage);
             d.MainAsync();
+
             while(true)
             {
+                bool terminateFlag = false;
                 string command = Console.ReadLine();
                 switch(command)
                 {
@@ -26,6 +29,15 @@ namespace Cherry
                         d.resetMessageHandler(PluginManager.GetPluginMessageHandlers());
                         PluginManager.SetPluginsMessageSendTarget(d.sendMessage);
                         break;
+                    case "quit":
+                        d.logout();
+                        terminateFlag = true;
+                        break;
+                }
+
+                if (terminateFlag)
+                {
+                    break;
                 }
             }
         }

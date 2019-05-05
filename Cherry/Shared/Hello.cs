@@ -21,5 +21,10 @@ namespace Cherry.Shared.Plugins
         {
             sendTarget += m;
         }
+
+        void ICherryPlugin.SetRequiredSettings(Settings s)
+        {
+            return;
+        }
     }
 }

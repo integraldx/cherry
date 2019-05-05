@@ -4,12 +4,13 @@ using System.Text;
 using System.IO;
 using Newtonsoft.Json.Linq;
 
-namespace Cherry
+namespace Cherry.Shared
 {
-    class Settings
+    public class Settings
     {
         public string BotToken { get; private set; }
         private List<string> pluginNames = new List<string>();
+        JObject configJsonContent;
 
         public Settings()
         {
@@ -28,9 +29,9 @@ namespace Cherry
             settingsFileStream.Close();
 
 
-            var jsonObject = JObject.Parse(Encoding.UTF8.GetString(byteArray));
-            BotToken = jsonObject.GetValue("BotToken").ToString();
-            var pluginArrs = jsonObject.GetValue("Plugins");
+            configJsonContent = JObject.Parse(Encoding.UTF8.GetString(byteArray));
+            BotToken = configJsonContent.GetValue("BotToken").ToString();
+            var pluginArrs = configJsonContent.GetValue("Plugins");
             foreach(var i in pluginArrs)
             {
                 pluginNames.Add(i.ToString());
@@ -48,5 +49,13 @@ namespace Cherry
         {
             return pluginNames.ToArray();
         }
+
+        public string GetValueByName(string contentPath)
+        {
+            JToken tok = configJsonContent.SelectToken("$");
+            var a = tok.SelectToken(contentPath);
+            return a.ToString();
+        }
+
     }
 }

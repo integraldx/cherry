@@ -16,11 +16,12 @@
 
   <ItemGroup>
     <PackageReference Include="Discord.Net" Version="2.0.1" />
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="Plugins\Hello\Hello.csproj" />
+    <ProjectReference Include="Plugins\Weather\Weather.csproj" />
     <ProjectReference Include="Shared\Shared.csproj" />
   </ItemGroup>
 
