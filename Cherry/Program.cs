@@ -15,12 +15,14 @@ namespace Cherry
             d = new Discord.Discord(s.BotToken);
             d.addMessageHandler(PluginManager.GetPluginMessageHandlers());
             PluginManager.SetPluginsMessageSendTarget(d.sendMessage);
+            PluginManager.FeedSettingsToPlugins(s);
             d.MainAsync();
 
             while(true)
             {
                 bool terminateFlag = false;
-                string command = Console.ReadLine();
+                string inputContent = Console.ReadLine();
+                string command = inputContent.Split(' ')[0];
                 switch(command)
                 {
                     case "reload":
@@ -28,6 +30,7 @@ namespace Cherry
                         PluginManager.LoadPlugins(s);
                         d.resetMessageHandler(PluginManager.GetPluginMessageHandlers());
                         PluginManager.SetPluginsMessageSendTarget(d.sendMessage);
+                        PluginManager.FeedSettingsToPlugins(s);
                         break;
                     case "quit":
                         d.logout();
